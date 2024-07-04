@@ -1,8 +1,34 @@
 # Advanced Golang Concurrency – Patterns and Best Practices
 
-## Sync Primitives and Patterns
+A comprehensive guide to advanced concurrency patterns and best practices in Go with practical examples.
 
-### Basic Sync Primitives
+<!-- TOC -->
+* [Advanced Golang Concurrency – Patterns and Best Practices](#advanced-golang-concurrency--patterns-and-best-practices)
+  * [Basic Sync Primitives](#basic-sync-primitives)
+    * [Mutex vs RWMutex](#mutex-vs-rwmutex)
+    * [Semaphore vs Worker Pool](#semaphore-vs-worker-pool)
+  * [Advanced Sync Primitives](#advanced-sync-primitives)
+    * [Futex vs Mutex](#futex-vs-mutex)
+    * [When to Use Each Sync Primitive](#when-to-use-each-sync-primitive)
+    * [Spin Lock vs Ticket Lock](#spin-lock-vs-ticket-lock)
+  * [Practical Concurrency Constructs](#practical-concurrency-constructs)
+    * [Context Package](#context-package)
+    * [Channels and Select](#channels-and-select)
+  * [Concurrency Patterns](#concurrency-patterns)
+    * [Core Patterns](#core-patterns)
+  * [Avoiding Common Pitfalls](#avoiding-common-pitfalls)
+    * [Deadlocks](#deadlocks)
+    * [Starvation and Livelock](#starvation-and-livelock)
+    * [Race Conditions](#race-conditions)
+    * [Goroutine Leaks](#goroutine-leaks)
+  * [Data Structures for Concurrency](#data-structures-for-concurrency)
+  * [What if not Goroutines? – Other practices to consider](#what-if-not-goroutines--other-practices-to-consider)
+    * [Lock Free Data Structures](#lock-free-data-structures)
+    * [False Sharing and Cache Coherence](#false-sharing-and-cache-coherence)
+  * [Practical Examples](#practical-examples)
+<!-- TOC -->
+
+## Basic Sync Primitives
 
 1. **Mutex (sync.Mutex)**: Mutual exclusion lock to prevent race conditions.
 2. **RWMutex (sync.RWMutex)**: A reader/writer mutual exclusion lock.
@@ -12,18 +38,18 @@
 6. **Atomic Operations (sync/atomic)**: Atomic operations for low-level synchronization.
 7. **Semaphore**: A signaling mechanism to control access to resources.
 
-#### Mutex vs RWMutex
+### Mutex vs RWMutex
 
 RWMutex is thus preferable for data that is mostly read.
 
-#### Semaphore vs Worker Pool
+### Semaphore vs Worker Pool
 
 Both patterns are used to control access to resources, but they serve different purposes.
 
 - **Semaphore**: runs each **_new task_** in a **_new separate goroutine_**.
 - **Worker Pool**: runs each **_new task_** in a **_pre-allocated goroutine_**.
 
-### Advanced Sync Primitives
+## Advanced Sync Primitives
 
 1. **Futex & Mutex**: Lightweight user-space locks.
    - **Futex**: Fast user-space mutex.
@@ -31,12 +57,27 @@ Both patterns are used to control access to resources, but they serve different 
 2. **Spin Lock**: Busy-wait loop for synchronization.
 3. **Ticket Lock**: Fair locking mechanism using ticket numbers.
 
+### Futex vs Mutex
 
-#### When to Use Each Sync Primitive
+- Futex is a user-space lock that avoids system calls when possible. In Golang, there is no direct access to futexes, but the runtime uses them internally. 
+- Mutex is a kernel-assisted lock that uses system calls to block/unblock goroutines.
 
-#### Futex vs Mutex
+### When to Use Each Sync Primitive
 
-#### Spin Lock vs Ticket Lock
+### Spin Lock vs Ticket Lock
+
+## Practical Concurrency Constructs
+
+### Context Package
+
+1. **Context**: Carry deadlines, cancellation signals, and request-scoped values.
+   - **Cancel**: Propagate cancellation signals to goroutines. 
+
+### Channels and Select
+
+1. **Channels**: Typed conduits for communication between goroutines.
+2. **Select**: Wait on multiple channel operations.
+    - **Select Timeout**: Implement timeouts in `select` statements to avoid blocking indefinitely. `time.After` can be used to create a timeout channel.
 
 ## Concurrency Patterns
 
@@ -52,18 +93,6 @@ Both patterns are used to control access to resources, but they serve different 
 8. **Bridge**: Connect multiple channels together.
 9. **Tee Channel**: Split data from one channel into multiple channels.
 
-## Practical Concurrency Constructs
-
-### Channels and Select
-
-1. **Channels**: Typed conduits for communication between goroutines.
-2. **Select**: Wait on multiple channel operations.
-    - **Select Timeout**: Implement timeouts in `select` statements to avoid blocking indefinitely. `time.After` can be used to create a timeout channel.
-
-### Context Package
-
-1. **Context**: Carry deadlines, cancellation signals, and request-scoped values.
-    - **Cancel**: Propagate cancellation signals to goroutines.
 
 ## Avoiding Common Pitfalls
 
@@ -82,7 +111,6 @@ Both patterns are used to control access to resources, but they serve different 
 1. **Race Conditions**: Concurrent access to shared resources leading to inconsistent results.
     - **Tools**: Use tools like `go run -race` to detect race conditions.
 
-
 ### Goroutine Leaks
 
 ## Data Structures for Concurrency
@@ -90,13 +118,12 @@ Both patterns are used to control access to resources, but they serve different 
 1. **Ring Buffer**: Circular buffer for fixed-size data.
 2. **Concurrent Map**: Map with concurrent access support.
 
-## Best Practices and Performance Optimization
+## What if not Goroutines? – Other practices to consider
 
-1. **Profiling**: Use Go's profiling tools to identify and optimize performance bottlenecks.
-2. **Goroutine Leaks**: Ensure all started goroutines are properly terminated.
-3. **Batching**: Combine multiple operations to reduce the overhead of context switching.
-4. **Load Balancing**: Distribute tasks evenly across goroutines to avoid overloading any single goroutine.
+### Lock Free Data Structures
 
+
+### False Sharing and Cache Coherence
 
 ## Practical Examples
 
